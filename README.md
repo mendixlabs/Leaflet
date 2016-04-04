@@ -1,4 +1,6 @@
-#OpenLayers Maps Widget
+#Leaflet Maps Widget
+
+![Banner](https://raw.githubusercontent.com/mendix/Leaflet/master/assets/app_store_banner.png)
 
 Add different type of maps to your application, using [Leaflet.js](http://leafletjs.com/)! This widget is almost the same as the GoogleMaps widget, without the typical interaction you have in Google Maps, but with a wide variety of maps available.
 
@@ -41,7 +43,6 @@ Providers:
     MapQuestOpen
         .OSM
         .Aerial
-        .HybridOverlay
     Stamen
         .Toner
         .TonerBackground
