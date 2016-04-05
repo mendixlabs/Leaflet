@@ -211,7 +211,7 @@ define([
 
             if (this.controlFullscreen) {
                 LL.control.fullscreen({
-                    position: "topright",
+                    position: this.controlFullscreenPosition,
                     forceSeparateButton: true
                 }).addTo(this._map);
             }

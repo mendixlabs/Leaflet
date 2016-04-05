@@ -240,7 +240,7 @@
                 <enumerationValue key="bottomright">Bottom right</enumerationValue>
             </enumerationValues>
         </property>
-        <property key="controlFullscreennPosition" type="enumeration" defaultValue="topright" required="true">
+        <property key="controlFullscreenPosition" type="enumeration" defaultValue="topright" required="true">
             <caption>Fullscreen control position</caption>
             <category>Controls position</category>
             <description></description>
