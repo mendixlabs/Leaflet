@@ -360,8 +360,8 @@ define([
                     } else {
                         markerObj.marker.addTo(this._map);
                     }
-                    if (index === this._markerCache.length - 1) {
-                        //this._map.fitBounds(bounds);
+                    if (index === this._markerCache.length - 1 && bounds.length > 0) {
+                        this._map.fitBounds(bounds);
                     }
                 }
             }));
