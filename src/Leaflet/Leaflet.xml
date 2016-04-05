@@ -167,12 +167,12 @@
             <category>Map Type</category>
             <description>Use a custom Map Type. You need to set a Custom Map Url. Instructions: http://leafletjs.com/reference.html#tilelayer</description>
         </property>
-        <property key="customMapTypeUrl" type="string" defaultValue="//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png">
+        <property key="customMapTypeUrl" type="string" defaultValue="//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" required="false">
             <caption>Custom Map Url</caption>
             <category>Map Type</category>
             <description>Set an url for custom map type</description>
         </property>
-        <property key="customMapTypeOptions" type="string" multiline="true" defaultValue="{subdomains:'abc'}">
+        <property key="customMapTypeOptions" type="string" multiline="true" defaultValue="{subdomains:'abc'}" required="false">
             <caption>Custom Map Options</caption>
             <category>Map Type</category>
             <description>Set the options for the custom map. This has to be a valid object ({}) with "key":"value" pairs, divided by commas. See options: http://leafletjs.com/reference.html#tilelayer</description>
