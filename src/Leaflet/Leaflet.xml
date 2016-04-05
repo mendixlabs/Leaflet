@@ -64,6 +64,15 @@
                 <attributeType name="String"/>
             </attributeTypes>
         </property>
+        <property key="markerCategory" type="attribute" required="false" entityProperty="mapEntity" isPath="optional" pathType="reference">
+            <caption>Marker category</caption>
+            <category>Data source</category>
+            <description>Category of the marker. This will be used as a label in conjunction with "Show categories" in Controls (Not required)</description>
+            <attributeTypes>
+                <attributeType name="String"/>
+                <attributeType name="Enum"/>
+            </attributeTypes>
+        </property>
         <property key="latAttr" type="attribute" entityProperty="mapEntity" required="true" isPath="optional" pathType="reference">
             <caption>Latitude attribute</caption>
             <category>Data source</category>
@@ -191,41 +200,60 @@
             <category>Controls</category>
             <description>Add zoom control to the map (+/- button)</description>
         </property>
-        <property key="controlZoomControlPosition" type="enumeration" defaultValue="topleft" required="true">
-            <caption>Zoom control position</caption>
-            <category>Controls</category>
-            <description></description>
-            <enumerationValues>
-                <enumerationValue key="topleft">Top left</enumerationValue>
-                <enumerationValue key="topright">Top right</enumerationValue>
-                <enumerationValue key="bottomleft">Bottom left</enumerationValue>
-                <enumerationValue key="bottomright">Bottom right</enumerationValue>
-            </enumerationValues>
-        </property>
         <property key="controlAttribution" type="boolean" defaultValue="true">
             <caption>Attribution control</caption>
             <category>Controls</category>
             <description>Add attributions to the map (credits)</description>
-        </property>
-        <property key="controlAttributionPosition" type="enumeration" defaultValue="bottomright" required="true">
-            <caption>Attribution control position</caption>
-            <category>Controls</category>
-            <description></description>
-            <enumerationValues>
-                <enumerationValue key="topleft">Top left</enumerationValue>
-                <enumerationValue key="topright">Top right</enumerationValue>
-                <enumerationValue key="bottomleft">Bottom left</enumerationValue>
-                <enumerationValue key="bottomright">Bottom right</enumerationValue>
-            </enumerationValues>
         </property>
         <property key="controlFullscreen" type="boolean" defaultValue="false">
             <caption>Fullscreen control</caption>
             <category>Controls</category>
             <description>Add fullscreen button to the map</description>
         </property>
+        <property key="controlCategories" type="boolean" defaultValue="false">
+            <caption>Show categories</caption>
+            <category>Controls</category>
+            <description>Add a layers button to the map (to switch categories on and off). You will need to set the "Marker category" in Data Source for this.</description>
+        </property>
+        <!--
+            CONTROL positions
+        -->
+        <property key="controlZoomControlPosition" type="enumeration" defaultValue="topleft" required="true">
+            <caption>Zoom control position</caption>
+            <category>Controls position</category>
+            <description></description>
+            <enumerationValues>
+                <enumerationValue key="topleft">Top left</enumerationValue>
+                <enumerationValue key="topright">Top right</enumerationValue>
+                <enumerationValue key="bottomleft">Bottom left</enumerationValue>
+                <enumerationValue key="bottomright">Bottom right</enumerationValue>
+            </enumerationValues>
+        </property>
+        <property key="controlAttributionPosition" type="enumeration" defaultValue="bottomright" required="true">
+            <caption>Attribution control position</caption>
+            <category>Controls position</category>
+            <description></description>
+            <enumerationValues>
+                <enumerationValue key="topleft">Top left</enumerationValue>
+                <enumerationValue key="topright">Top right</enumerationValue>
+                <enumerationValue key="bottomleft">Bottom left</enumerationValue>
+                <enumerationValue key="bottomright">Bottom right</enumerationValue>
+            </enumerationValues>
+        </property>
         <property key="controlFullscreennPosition" type="enumeration" defaultValue="topright" required="true">
             <caption>Fullscreen control position</caption>
-            <category>Controls</category>
+            <category>Controls position</category>
+            <description></description>
+            <enumerationValues>
+                <enumerationValue key="topleft">Top left</enumerationValue>
+                <enumerationValue key="topright">Top right</enumerationValue>
+                <enumerationValue key="bottomleft">Bottom left</enumerationValue>
+                <enumerationValue key="bottomright">Bottom right</enumerationValue>
+            </enumerationValues>
+        </property>
+        <property key="controlCategoriesPosition" type="enumeration" defaultValue="topright" required="true">
+            <caption>Categories control position</caption>
+            <category>Controls position</category>
             <description></description>
             <enumerationValues>
                 <enumerationValue key="topleft">Top left</enumerationValue>

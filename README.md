@@ -93,6 +93,7 @@ To finish up, just enter the correct values into the widget. For more informatio
 * Latitude attribute: The attribute containing the latitudes of the objects. This can be 1-deep association.
 * Longitude attribute: The attribute containing the longitudes of the objects. This can be 1-deep association.
 * On click microflow: Microflow to be executed when clicking on a marker. The Microflow will have the corresponding object as an input parameter
+* Marker category: Category of the marker. This is used as a label together with "Show Categories" in Controls.
 
 ####Appearance
 * Height: The height the widget will have (in pixels) . This attribute is required.
@@ -112,10 +113,12 @@ To finish up, just enter the correct values into the widget. For more informatio
 * Touch zoom: Enable/disable zooming by touch-dragging two fingers (mobile)
 * Mouse scrolling: Enable/disable scrolling by using the mouse wheel
 * Zoom control: Enable/disable zoom control (+/- buttons on the map)
-* Zoom control position: Position of the zoomcontrol on the map
 * Attribution control: Enable/disable attribution control (credits that are shown on the bottom right of the map)
-* Attribution control position: Position of the attribution on the map
 * Fullscreen control: Enable/disable fullscreen button
+* Show categories: Add a layers button tot the map where you can switch categories on and off. You will need to set the Marker category in Data Source
+
+####Controls position
+This tab contains the positions on the map for various controls that you can switch on/off in "Controls"
 
 ####Location
 * Add geolocation button: This will add a button that you can use to find your location

@@ -43,6 +43,7 @@ define([
         markerDisplayAttr: "",
         latAttr: "",
         lngAttr: "",
+        markerCategory: "",
         onClickMarkerMf: "",
 
         mapHeight: "",
@@ -63,6 +64,8 @@ define([
         controlAttributionPosition: "bottomright",
         controlFullscreen: false,
         controlFullscreenPosition: "topright",
+        controlCategories: false,
+        controlCategoriesPosition: "topright",
 
         locateControl: false,
         locateControlPosition: "topleft",
@@ -78,6 +81,8 @@ define([
         // Internal variables
         _markerCache: [],
         _layerGroup: null,
+        _layerCategoryGroups: {},
+        _layerController: null,
         _minZoom: 0,
         _maxZoom: 20,
 
@@ -186,7 +191,9 @@ define([
                 width: this.mapWidth
             });
 
-            this._map = LL.map(this.mapContainer, {
+            this.mapContainer.id = this.id + "_container";
+
+            this._map = LL.map(this.id + "_container", {
                 dragging: this.controlDragging,
                 touchZoom: this.controlTouchZoom,
                 scrollWheelZoom: this.controlScrollWheelZoom,
@@ -233,6 +240,34 @@ define([
             this._layerGroup.addTo(this._map);
 
             this._fetchMarkers(callback);
+        },
+
+        _updateLayerControls: function () {
+            if (!this.controlCategories) {
+                return;
+            }
+            logger.debug(this.id + "._updateLayerControls");
+
+            if (this._map) {
+                if (this._layerController) {
+                    this._layerController.removeFrom(this._map);
+                    this._layerController = null;
+                }
+                // Because we added an id to the category (making sure this is on the same map (seems a bug), we need to copy this)
+                var layerCategoryGroups = {},
+                    add = false; // If there are no layercategorygroups, don't add the control
+
+                Object.keys(this._layerCategoryGroups).forEach(lang.hitch(this, function (key) {
+                    add = true;
+                    layerCategoryGroups[key.replace("_" + this.id, "")] = this._layerCategoryGroups[key];
+                }));
+
+                if (add) {
+                    this._layerController = LL.control.layers({}, layerCategoryGroups, { position: this.controlCategoriesPosition }).addTo(this._map);
+                    this._layerController.setPosition(this.controlCategoriesPosition);
+                }
+
+            }
         },
 
         _fetchMarkers: function (callback) {
@@ -315,17 +350,19 @@ define([
             this._removeAllMarkers();
 
             dojoArray.forEach(this._markerCache, lang.hitch(this, function (markerObj, index) {
-                if (this._contextObj) {
-                    if (markerObj.id === this._contextObj.getGuid()) {
+                if (markerObj && markerObj.marker) {
+                    if (this._contextObj) {
+                        if (markerObj.id === this._contextObj.getGuid()) {
+                            markerObj.marker.addTo(this._map);
+                            bounds.push(markerObj.loc);
+                            cached = true;
+                        }
+                    } else {
                         markerObj.marker.addTo(this._map);
-                        bounds.push(markerObj.loc);
-                        cached = true;
                     }
-                } else {
-                    markerObj.marker.addTo(this._map);
-                }
-                if (index === this._markerCache.length - 1) {
-                    this._map.fitBounds(bounds);
+                    if (index === this._markerCache.length - 1) {
+                        //this._map.fitBounds(bounds);
+                    }
                 }
             }));
 
@@ -340,6 +377,7 @@ define([
             logger.debug(this.id + "._removeAllMarkers");
             if (this._map) {
                 this._layerGroup.clearLayers();
+                this._layerCategoryGroups = {};
             }
         },
 
@@ -375,7 +413,22 @@ define([
                 });
             }
 
-            this._layerGroup.addLayer(marker);
+            if (this.markerCategory && this.controlCategories) {
+                var category = obj.get(this.markerCategory);
+                if (category) {
+                    var layerCategory = this._layerCategoryGroups[category + "_"+ this.id];
+                    if (!layerCategory) {
+                        layerCategory = this._layerCategoryGroups[category + "_"+ this.id] = new LL.layerGroup();
+                        this._layerGroup.addLayer(layerCategory);
+                    }
+                    layerCategory.addLayer(marker);
+                } else {
+                    this._layerGroup.addLayer(marker);
+                }
+            } else {
+                this._layerGroup.addLayer(marker);
+            }
+
             markerObj.marker = marker;
 
             if (!this._markerCache) {
@@ -392,6 +445,8 @@ define([
             if (!found) {
                 this._markerCache.push(markerObj);
             }
+
+            this._updateLayerControls();
         },
 
         checkAttrForDecimal: function (obj, attr) {
@@ -462,8 +517,9 @@ define([
             logger.debug(this.id + ".uninitialize");
             if (this._map) {
                 this._map.remove();
-                this._markerCache = [];
             }
+            this._markerCache = [];
+            this._layerCategoryGroups = {};
         }
     });
 });
