@@ -15,7 +15,7 @@ define([
     "Leaflet/lib/leaflet-locatecontrol",
     "Leaflet/lib/leaflet-fullscreen"
 
-], function (declare, _WidgetBase, _TemplatedMixin, domStyle, domConstruct, dojoArray, lang, widgetTemplate, Leaflet) {
+], function(declare, _WidgetBase, _TemplatedMixin, domStyle, domConstruct, dojoArray, lang, widgetTemplate, Leaflet) {
     "use strict";
 
     var LL = Leaflet.noConflict();
@@ -91,7 +91,7 @@ define([
         _contextObj: null,
         _map: null,
 
-        postCreate: function () {
+        postCreate: function() {
             logger.debug(this.id + ".postCreate");
 
             this._defaultPosition = [
@@ -105,7 +105,7 @@ define([
             this._layerGroup = new LL.layerGroup();
         },
 
-        update: function (obj, callback) {
+        update: function(obj, callback) {
             logger.debug(this.id + ".update");
             this._contextObj = obj;
             this._resetSubscriptions();
@@ -117,18 +117,18 @@ define([
             }
         },
 
-        resize: function (box) {
+        resize: function(box) {
             logger.debug(this.id + ".resize");
             if (this._map) {
                 this._map.invalidateSize();
             }
         },
 
-        _resetSubscriptions: function () {
+        _resetSubscriptions: function() {
             logger.debug(this.id + "._resetSubscriptions");
 
             if (this._handle) {
-                logger.debug(this.id + "._resetSubscriptions unsubscribe", this._handle);
+                logger.debug(this.id + "._resetSubscriptions unsubscribe");
                 this.unsubscribe(this._handle);
                 this._handle = null;
             }
@@ -137,21 +137,21 @@ define([
                 logger.debug(this.id + "._resetSubscriptions subscribe", this._contextObj.getGuid());
                 this._handle = this.subscribe({
                     guid: this._contextObj.getGuid(),
-                    callback: lang.hitch(this, function (guid) {
+                    callback: lang.hitch(this, function(guid) {
                         this._fetchMarkers();
                     })
                 });
             } else {
                 this._handle = this.subscribe({
                     entity: this.mapEntity,
-                    callback: lang.hitch(this, function (entity) {
+                    callback: lang.hitch(this, function(entity) {
                         this._fetchMarkers();
                     })
                 });
             }
         },
 
-        _getMapLayer: function () {
+        _getMapLayer: function() {
             var tileLayer = null;
 
             if (this.customMapType && this.customMapTypeUrl) {
@@ -182,10 +182,12 @@ define([
             return tileLayer;
         },
 
-        _loadMap: function (callback) {
+        _loadMap: function(callback) {
             logger.debug(this.id + "._loadMap");
 
-            domStyle.set(this.domNode, { height: this.mapHeight });
+            domStyle.set(this.domNode, {
+                height: this.mapHeight
+            });
             domStyle.set(this.mapContainer, {
                 height: this.mapHeight,
                 width: this.mapWidth
@@ -230,7 +232,7 @@ define([
                     position: this.locateControlPosition,
                     drawCircle: this.locateControlDrawCircle,
                     keepCurrentZoomLevel: this.locateControlKeepZoomLevel,
-                    icon: "glyphicon glyphicon-screenshot",         // Using glyphicons that are part of Mendix
+                    icon: "glyphicon glyphicon-screenshot", // Using glyphicons that are part of Mendix
                     iconLoading: "glyphicon glyphicon-refresh"
                 }).addTo(this._map);
             }
@@ -242,7 +244,7 @@ define([
             this._fetchMarkers(callback);
         },
 
-        _updateLayerControls: function () {
+        _updateLayerControls: function() {
             if (!this.controlCategories) {
                 return;
             }
@@ -257,20 +259,22 @@ define([
                 var layerCategoryGroups = {},
                     add = false; // If there are no layercategorygroups, don't add the control
 
-                Object.keys(this._layerCategoryGroups).forEach(lang.hitch(this, function (key) {
+                Object.keys(this._layerCategoryGroups).forEach(lang.hitch(this, function(key) {
                     add = true;
                     layerCategoryGroups[key.replace("_" + this.id, "")] = this._layerCategoryGroups[key];
                 }));
 
                 if (add) {
-                    this._layerController = LL.control.layers({}, layerCategoryGroups, { position: this.controlCategoriesPosition }).addTo(this._map);
+                    this._layerController = LL.control.layers({}, layerCategoryGroups, {
+                        position: this.controlCategoriesPosition
+                    }).addTo(this._map);
                     this._layerController.setPosition(this.controlCategoriesPosition);
                 }
 
             }
         },
 
-        _fetchMarkers: function (callback) {
+        _fetchMarkers: function(callback) {
             logger.debug(this.id + "._fetchMarkers");
             if (this.gotocontext) {
                 this._goToContext(callback);
@@ -287,12 +291,12 @@ define([
             }
         },
 
-        _refreshMap: function (objs, callback) {
+        _refreshMap: function(objs, callback) {
             logger.debug(this.id + "._refreshMap");
             var panPosition = this._defaultPosition,
                 positions = [];
 
-            dojoArray.forEach(objs, lang.hitch(this, function (obj) {
+            dojoArray.forEach(objs, lang.hitch(this, function(obj) {
                 this._addMarker(obj);
                 var position = this._getLatLng(obj);
                 if (position) {
@@ -310,10 +314,10 @@ define([
                 this._map.fitBounds(positions);
             }
 
-            mendix.lang.nullExec(callback);
+            this._executeCallback(callback, "_refreshMap");
         },
 
-        _fetchFromDB: function (callback) {
+        _fetchFromDB: function(callback) {
             logger.debug(this.id + "._fetchFromDB");
             var xpath = "//" + this.mapEntity + this.xpathConstraint;
 
@@ -323,33 +327,31 @@ define([
                 xpath = xpath.replace("[%CurrentObject%]", this._contextObj.getGuid());
                 mx.data.get({
                     xpath: xpath,
-                    callback: lang.hitch(this, function (objs) {
+                    callback: lang.hitch(this, function(objs) {
                         this._refreshMap(objs, callback);
                     })
                 });
             } else if (!this._contextObj && (xpath.indexOf("[%CurrentObject%]") > -1)) {
                 console.warn("No context for xpath, not fetching.");
-                if (typeof callback === "function") {
-                    callback();
-                }
+                this._executeCallback(callback, "_fetchFromDB");
             } else {
                 mx.data.get({
                     xpath: xpath,
-                    callback: lang.hitch(this, function (objs) {
+                    callback: lang.hitch(this, function(objs) {
                         this._refreshMap(objs, callback);
                     })
                 });
             }
         },
 
-        _fetchFromCache: function (callback) {
+        _fetchFromCache: function(callback) {
             logger.debug(this.id + "._fetchFromCache");
             var cached = false,
                 bounds = [];
 
             this._removeAllMarkers();
 
-            dojoArray.forEach(this._markerCache, lang.hitch(this, function (markerObj, index) {
+            dojoArray.forEach(this._markerCache, lang.hitch(this, function(markerObj, index) {
                 if (markerObj && markerObj.marker) {
                     if (this._contextObj) {
                         if (markerObj.id === this._contextObj.getGuid()) {
@@ -368,12 +370,12 @@ define([
 
             if (!cached) {
                 this._fetchFromDB(callback);
-            } else if (typeof callback === "function") {
-                callback();
+            } else {
+                this._executeCallback(callback, "_fetchFromCache");
             }
         },
 
-        _removeAllMarkers: function () {
+        _removeAllMarkers: function() {
             logger.debug(this.id + "._removeAllMarkers");
             if (this._map) {
                 this._layerGroup.clearLayers();
@@ -381,7 +383,7 @@ define([
             }
         },
 
-        _addMarker: function (obj) {
+        _addMarker: function(obj) {
             logger.debug(this.id + "._addMarker");
 
             var id = this._contextObj ? this._contextObj.getGuid() : null,
@@ -398,15 +400,15 @@ define([
             var marker = LL.marker(loc);
 
             if (this.onClickMarkerMf !== "") {
-                marker.on("click", lang.hitch(this, function (e) {
+                marker.on("click", lang.hitch(this, function(e) {
                     this._executeMf(this.onClickMarkerMf, obj);
                 }));
             }
 
             if (this.markerDisplayAttr) {
                 var template = this.markerTemplate !== "" ?
-                                this.markerTemplate.replace("{Marker}", obj.get(this.markerDisplayAttr)) :
-                                "<p>" + obj.get(this.markerDisplayAttr) + "<p/>";
+                    this.markerTemplate.replace("{Marker}", obj.get(this.markerDisplayAttr)) :
+                    "<p>" + obj.get(this.markerDisplayAttr) + "<p/>";
 
                 marker.bindPopup(template, {
                     closeButton: false
@@ -416,9 +418,9 @@ define([
             if (this.markerCategory && this.controlCategories) {
                 var category = obj.get(this.markerCategory);
                 if (category) {
-                    var layerCategory = this._layerCategoryGroups[category + "_"+ this.id];
+                    var layerCategory = this._layerCategoryGroups[category + "_" + this.id];
                     if (!layerCategory) {
-                        layerCategory = this._layerCategoryGroups[category + "_"+ this.id] = new LL.layerGroup();
+                        layerCategory = this._layerCategoryGroups[category + "_" + this.id] = new LL.layerGroup();
                         this._layerGroup.addLayer(layerCategory);
                     }
                     layerCategory.addLayer(marker);
@@ -436,7 +438,7 @@ define([
             }
 
             var found = false;
-            dojoArray.forEach(this._markerCache, lang.hitch(this, function (markerObj) {
+            dojoArray.forEach(this._markerCache, lang.hitch(this, function(markerObj) {
                 if (markerObj.obj.getGuid() === obj.getGuid()) {
                     found = true;
                 }
@@ -449,7 +451,7 @@ define([
             this._updateLayerControls();
         },
 
-        checkAttrForDecimal: function (obj, attr) {
+        checkAttrForDecimal: function(obj, attr) {
             logger.debug(this.id + ".checkAttrForDecimal");
             if (obj.get(attr) === "Decimal") {
                 return obj.get(attr).toFixed(5);
@@ -458,7 +460,7 @@ define([
             }
         },
 
-        _getLatLng: function (obj) {
+        _getLatLng: function(obj) {
             logger.debug(this.id + "._getLatLng");
             var lat = this.checkAttrForDecimal(obj, this.latAttr),
                 lng = this.checkAttrForDecimal(obj, this.lngAttr);
@@ -475,51 +477,58 @@ define([
             }
         },
 
-        _goToContext: function (callback) {
+        _goToContext: function(callback) {
             logger.debug(this.id + "._goToContext");
             this._removeAllMarkers();
             if (this._map && this._contextObj) {
                 var objs = [];
                 if (this._contextObj) {
-                    objs = [ this._contextObj ];
+                    objs = [this._contextObj];
                 } else {
                     logger.error(this.id + "._goToContext: no Context object while you have set \"Pan to context\" in the Modeler! Showing default position");
                 }
                 this._refreshMap(objs, callback);
             } else {
-                mendix.lang.nullExec(callback);
+                this._executeCallback(callback, "_goToContext");
             }
         },
 
         _executeMf: function(mf, obj) {
             logger.debug(this.id + "._executeMf");
-			if (mf && obj && obj.getGuid()) {
-				mx.data.action({
-					store: {
-						caller: this.mxform
-					},
-					params: {
-                        guids: [ obj.getGuid() ],
+            if (mf && obj && obj.getGuid()) {
+                mx.data.action({
+                    store: {
+                        caller: this.mxform
+                    },
+                    params: {
+                        guids: [obj.getGuid()],
                         applyto: "selection",
-						actionname: mf
-					},
-					callback: lang.hitch(this, function() {
+                        actionname: mf
+                    },
+                    callback: lang.hitch(this, function() {
                         logger.debug(this.id + "._executeMf success");
                     }),
-					error: lang.hitch(this, function(e) {
+                    error: lang.hitch(this, function(e) {
                         console.error(this.id + "._executeMf failed, error: ", e.toString());
                     })
-				});
-			}
-		},
+                });
+            }
+        },
 
-        uninitialize: function () {
+        uninitialize: function() {
             logger.debug(this.id + ".uninitialize");
             if (this._map) {
                 this._map.remove();
             }
             this._markerCache = [];
             this._layerCategoryGroups = {};
+        },
+
+        _executeCallback: function (cb, from) {
+          logger.debug(this.id + "._executeCallback " + (typeof cb) + (from ? " from " + from : ""));
+          if (cb && typeof cb === "function") {
+            cb();
+          }
         }
     });
 });
