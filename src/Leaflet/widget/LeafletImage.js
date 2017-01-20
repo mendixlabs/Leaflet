@@ -1,0 +1,496 @@
+define([
+    "dojo/_base/declare",
+    "mxui/widget/_WidgetBase",
+    "dijit/_TemplatedMixin",
+    "dojo/dom-style",
+    "dojo/dom-construct",
+    "dojo/_base/array",
+    "dojo/_base/lang",
+    "dojo/text!Leaflet/widget/template/Leaflet.html",
+    // Leaflet
+    "Leaflet/lib/leaflet-src",
+
+    // Plugins
+    "Leaflet/lib/leaflet-providers",
+    "Leaflet/lib/leaflet-locatecontrol",
+    "Leaflet/lib/leaflet-fullscreen"
+
+], function(declare, _WidgetBase, _TemplatedMixin, domStyle, domConstruct, dojoArray, lang, widgetTemplate, Leaflet) {
+    "use strict";
+
+    var LL = Leaflet.noConflict();
+    LL.Icon.Default.imagePath = require.toUrl("Leaflet/widget/ui/").split("?")[0];
+
+    return declare("Leaflet.widget.LeafletImage", [_WidgetBase, _TemplatedMixin], {
+
+        // Template
+        templateString: widgetTemplate,
+
+        // DOM node
+        mapContainer: null,
+
+        // Set by modeler
+        gotocontext: false,
+        defaultLat: 0,
+        defaultLng: 0,
+        minZoom: 0,
+        maxZoom: 20,
+        lowestZoom: 10,
+        updateRefresh: false,
+
+        mapEntity: "",
+        xpathConstraint: "",
+        markerDisplayAttr: "",
+        latAttr: "",
+        lngAttr: "",
+        markerCategory: "",
+        onClickMarkerMf: "",
+
+        mapHeight: "",
+        mapWidth: "",
+        markerTemplate: "<p>{Marker}</p>",
+
+        controlDragging: true,
+        controlTouchZoom: true,
+        controlScrollWheelZoom: true,
+        controlZoomControl: true,
+        controlZoomControlPosition: "topleft",
+        controlAttribution: true,
+        controlAttributionPosition: "bottomright",
+        controlFullscreen: false,
+        controlFullscreenPosition: "topright",
+        controlCategories: false,
+        controlCategoriesPosition: "topright",
+
+        locateControl: false,
+        locateControlPosition: "topleft",
+        locateControlDrawCircle: true,
+        locateControlKeepZoomLevel: false,
+
+        scaleControl: false,
+        scaleControlPosition: "bottomleft",
+        scaleControlMetric: true,
+        scaleControlImperial: true,
+        scaleControlMaxWidth: 100,
+
+        // Internal variables
+        _markerCache: [],
+        _layerGroup: null,
+        _layerCategoryGroups: {},
+        _layerController: null,
+        _minZoom: 0,
+        _maxZoom: 20,
+
+        _defaultPosition: [],
+        _handle: null,
+        _contextObj: null,
+        _map: null,
+
+        postCreate: function() {
+            logger.debug(this.id + ".postCreate");
+
+            this._defaultPosition = [
+                parseFloat(this.defaultLat),
+                parseFloat(this.defaultLng)
+            ];
+
+            this._minZoom = this.minZoom >= 0 ? this.minZoom : 0;
+            this._maxZoom = this.maxZoom > this.minZoom ? this.maxZoom : this.minZoom;
+
+            this._layerGroup = new LL.layerGroup();
+        },
+
+        update: function(obj, callback) {
+            logger.debug(this.id + ".update");
+            this._contextObj = obj;
+            this._resetSubscriptions();
+
+            if (!this._map) {
+                this._loadMap(callback);
+            } else {
+                this._fetchMarkers(callback);
+            }
+        },
+
+        resize: function(box) {
+            logger.debug(this.id + ".resize");
+            if (this._map) {
+                this._map.invalidateSize();
+            }
+        },
+
+        _resetSubscriptions: function() {
+            logger.debug(this.id + "._resetSubscriptions");
+
+            if (this._handle) {
+                logger.debug(this.id + "._resetSubscriptions unsubscribe");
+                this.unsubscribe(this._handle);
+                this._handle = null;
+            }
+
+            if (this._contextObj) {
+                logger.debug(this.id + "._resetSubscriptions subscribe", this._contextObj.getGuid());
+                this._handle = this.subscribe({
+                    guid: this._contextObj.getGuid(),
+                    callback: lang.hitch(this, function(guid) {
+                        this._fetchMarkers();
+                    })
+                });
+            } else {
+                this._handle = this.subscribe({
+                    entity: this.mapEntity,
+                    callback: lang.hitch(this, function(entity) {
+                        this._fetchMarkers();
+                    })
+                });
+            }
+        },
+
+        _getMapLayer: function() {
+            var bounds = [[0,0], [1000,1000]];
+            var tileLayer = LL.imageOverlay(this.imageMap, bounds);
+
+            if (tileLayer.options.minZoom < this._minZoom) {
+                tileLayer.options.minZoom = this._minZoom;
+            }
+
+            if (tileLayer.options.maxZoom > this._maxZoom) {
+                tileLayer.options.maxZoom = this._maxZoom;
+            }
+
+            return tileLayer;
+        },
+
+        _loadMap: function(callback) {
+            logger.debug(this.id + "._loadMap");
+
+            domStyle.set(this.domNode, {
+                height: this.mapHeight
+            });
+            domStyle.set(this.mapContainer, {
+                height: this.mapHeight,
+                width: this.mapWidth
+            });
+
+            this.mapContainer.id = this.id + "_container";
+
+            this._map = LL.map(this.id + "_container", {
+                crs: LL.CRS.Simple,
+                dragging: this.controlDragging,
+                touchZoom: this.controlTouchZoom,
+                scrollWheelZoom: this.controlScrollWheelZoom,
+                zoomControl: this.controlZoomControl,
+                attributionControl: this.controlAttribution
+            }).setView(this._defaultPosition, this.lowestZoom);
+
+            if (this.controlZoomControl) {
+                this._map.zoomControl.setPosition(this.controlZoomControlPosition);
+            }
+
+            if (this.controlAttribution) {
+                this._map.attributionControl.setPosition(this.controlAttributionPosition);
+            }
+
+            if (this.controlFullscreen) {
+                LL.control.fullscreen({
+                    position: this.controlFullscreenPosition,
+                    forceSeparateButton: true
+                }).addTo(this._map);
+            }
+
+            this._map.addLayer(this._getMapLayer());
+            this._map.setZoom(this.lowestZoom); // trigger setzoom to make sure it is rendered
+            this._layerGroup.addTo(this._map);
+
+            this._executeCallback(callback);
+
+            //this._fetchMarkers(callback);
+        },
+
+        _updateLayerControls: function() {
+            if (!this.controlCategories) {
+                return;
+            }
+            logger.debug(this.id + "._updateLayerControls");
+
+            if (this._map) {
+                if (this._layerController) {
+                    this._layerController.removeFrom(this._map);
+                    this._layerController = null;
+                }
+                // Because we added an id to the category (making sure this is on the same map (seems a bug), we need to copy this)
+                var layerCategoryGroups = {},
+                    add = false; // If there are no layercategorygroups, don't add the control
+
+                Object.keys(this._layerCategoryGroups).forEach(lang.hitch(this, function(key) {
+                    add = true;
+                    layerCategoryGroups[key.replace("_" + this.id, "")] = this._layerCategoryGroups[key];
+                }));
+
+                if (add) {
+                    this._layerController = LL.control.layers({}, layerCategoryGroups, {
+                        position: this.controlCategoriesPosition
+                    }).addTo(this._map);
+                    this._layerController.setPosition(this.controlCategoriesPosition);
+                }
+
+            }
+        },
+
+        _fetchMarkers: function(callback) {
+            logger.debug(this.id + "._fetchMarkers");
+            if (this.gotocontext) {
+                this._goToContext(callback);
+            } else {
+                if (this.updateRefresh) {
+                    this._fetchFromDB(callback);
+                } else {
+                    if (this._markerCache) {
+                        this._fetchFromCache(callback);
+                    } else {
+                        this._fetchFromDB(callback);
+                    }
+                }
+            }
+        },
+
+        _refreshMap: function(objs, callback) {
+            logger.debug(this.id + "._refreshMap");
+            var panPosition = this._defaultPosition,
+                positions = [];
+
+            dojoArray.forEach(objs, lang.hitch(this, function(obj) {
+                this._addMarker(obj);
+                var position = this._getLatLng(obj);
+                if (position) {
+                    positions.push(position); // reversing lat lng for boundingExtent
+                    panPosition = position;
+                } else {
+                    logger.error(this.id + ": " + "Incorrect coordinates (" + this.checkAttrForDecimal(obj, this.latAttr) + "," + this.checkAttrForDecimal(obj, this.lngAttr) + ")");
+                }
+            }));
+
+            if (positions.length < 2) {
+                this._map.setZoom(this.lowestZoom);
+                this._map.panTo(panPosition);
+            } else {
+                this._map.fitBounds(positions);
+            }
+
+            this._executeCallback(callback, "_refreshMap");
+        },
+
+        _fetchFromDB: function(callback) {
+            logger.debug(this.id + "._fetchFromDB");
+            var xpath = "//" + this.mapEntity + this.xpathConstraint;
+
+            this._removeAllMarkers();
+
+            if (this._contextObj) {
+                xpath = xpath.replace("[%CurrentObject%]", this._contextObj.getGuid());
+                mx.data.get({
+                    xpath: xpath,
+                    callback: lang.hitch(this, function(objs) {
+                        this._refreshMap(objs, callback);
+                    })
+                });
+            } else if (!this._contextObj && (xpath.indexOf("[%CurrentObject%]") > -1)) {
+                console.warn("No context for xpath, not fetching.");
+                this._executeCallback(callback, "_fetchFromDB");
+            } else {
+                mx.data.get({
+                    xpath: xpath,
+                    callback: lang.hitch(this, function(objs) {
+                        this._refreshMap(objs, callback);
+                    })
+                });
+            }
+        },
+
+        _fetchFromCache: function(callback) {
+            logger.debug(this.id + "._fetchFromCache");
+            var cached = false,
+                bounds = [];
+
+            this._removeAllMarkers();
+
+            dojoArray.forEach(this._markerCache, lang.hitch(this, function(markerObj, index) {
+                if (markerObj && markerObj.marker) {
+                    if (this._contextObj) {
+                        if (markerObj.id === this._contextObj.getGuid()) {
+                            markerObj.marker.addTo(this._map);
+                            bounds.push(markerObj.loc);
+                            cached = true;
+                        }
+                    } else {
+                        markerObj.marker.addTo(this._map);
+                    }
+                    if (index === this._markerCache.length - 1 && bounds.length > 0) {
+                        this._map.fitBounds(bounds);
+                    }
+                }
+            }));
+
+            if (!cached) {
+                this._fetchFromDB(callback);
+            } else {
+                this._executeCallback(callback, "_fetchFromCache");
+            }
+        },
+
+        _removeAllMarkers: function() {
+            logger.debug(this.id + "._removeAllMarkers");
+            if (this._map) {
+                this._layerGroup.clearLayers();
+                this._layerCategoryGroups = {};
+            }
+        },
+
+        _addMarker: function(obj) {
+            logger.debug(this.id + "._addMarker");
+
+            var id = this._contextObj ? this._contextObj.getGuid() : null,
+                lat = parseFloat(this.checkAttrForDecimal(obj, this.latAttr)),
+                lng = parseFloat(this.checkAttrForDecimal(obj, this.lngAttr)),
+                loc = [lat, lng],
+                markerObj = {
+                    context: id,
+                    obj: obj,
+                    marker: null,
+                    loc: loc
+                };
+
+            var marker = LL.marker(loc);
+
+            if (this.onClickMarkerMf !== "") {
+                marker.on("click", lang.hitch(this, function(e) {
+                    this._executeMf(this.onClickMarkerMf, obj);
+                }));
+            }
+
+            if (this.markerDisplayAttr) {
+                var template = this.markerTemplate !== "" ?
+                    this.markerTemplate.replace("{Marker}", obj.get(this.markerDisplayAttr)) :
+                    "<p>" + obj.get(this.markerDisplayAttr) + "<p/>";
+
+                marker.bindPopup(template, {
+                    closeButton: false
+                });
+            }
+
+            if (this.markerCategory && this.controlCategories) {
+                var category = obj.get(this.markerCategory);
+                if (category) {
+                    var layerCategory = this._layerCategoryGroups[category + "_" + this.id];
+                    if (!layerCategory) {
+                        layerCategory = this._layerCategoryGroups[category + "_" + this.id] = new LL.layerGroup();
+                        this._layerGroup.addLayer(layerCategory);
+                    }
+                    layerCategory.addLayer(marker);
+                } else {
+                    this._layerGroup.addLayer(marker);
+                }
+            } else {
+                this._layerGroup.addLayer(marker);
+            }
+
+            markerObj.marker = marker;
+
+            if (!this._markerCache) {
+                this._markerCache = [];
+            }
+
+            var found = false;
+            dojoArray.forEach(this._markerCache, lang.hitch(this, function(markerObj) {
+                if (markerObj.obj.getGuid() === obj.getGuid()) {
+                    found = true;
+                }
+            }));
+
+            if (!found) {
+                this._markerCache.push(markerObj);
+            }
+
+            this._updateLayerControls();
+        },
+
+        checkAttrForDecimal: function(obj, attr) {
+            logger.debug(this.id + ".checkAttrForDecimal");
+            if (obj.get(attr) === "Decimal") {
+                return obj.get(attr).toFixed(5);
+            } else {
+                return obj.get(attr);
+            }
+        },
+
+        _getLatLng: function(obj) {
+            logger.debug(this.id + "._getLatLng");
+            var lat = this.checkAttrForDecimal(obj, this.latAttr),
+                lng = this.checkAttrForDecimal(obj, this.lngAttr);
+
+            if (lat === "" && lng === "") {
+                return this._defaultPosition;
+            } else if (!isNaN(lat) && !isNaN(lng) && lat !== "" && lng !== "") {
+                return [
+                    parseFloat(lat),
+                    parseFloat(lng)
+                ];
+            } else {
+                return null;
+            }
+        },
+
+        _goToContext: function(callback) {
+            logger.debug(this.id + "._goToContext");
+            this._removeAllMarkers();
+            if (this._map && this._contextObj) {
+                var objs = [];
+                if (this._contextObj) {
+                    objs = [this._contextObj];
+                } else {
+                    logger.error(this.id + "._goToContext: no Context object while you have set \"Pan to context\" in the Modeler! Showing default position");
+                }
+                this._refreshMap(objs, callback);
+            } else {
+                this._executeCallback(callback, "_goToContext");
+            }
+        },
+
+        _executeMf: function(mf, obj) {
+            logger.debug(this.id + "._executeMf");
+            if (mf && obj && obj.getGuid()) {
+                mx.ui.action(mf, {
+                    params: {
+                        guids: [obj.getGuid()],
+                        applyto: "selection",
+                        actionname: mf
+                    },
+                    callback: lang.hitch(this, function() {
+                        logger.debug(this.id + "._executeMf success");
+                    }),
+                    error: lang.hitch(this, function(e) {
+                        console.error(this.id + "._executeMf failed, error: ", e.toString());
+                    })
+                }, this);
+            }
+        },
+
+        uninitialize: function() {
+            logger.debug(this.id + ".uninitialize");
+            if (this._map) {
+                this._map.remove();
+            }
+            this._markerCache = [];
+            this._layerCategoryGroups = {};
+        },
+
+        _executeCallback: function (cb, from) {
+          logger.debug(this.id + "._executeCallback " + (typeof cb) + (from ? " from " + from : ""));
+          if (cb && typeof cb === "function") {
+            cb();
+          }
+        }
+    });
+});
+
+require(["Leaflet/widget/LeafletImage"], function() {});
