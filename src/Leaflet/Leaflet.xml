@@ -101,6 +101,15 @@
             <description>The microflow to execute when clicking on a Marker</description>
             <returnType type="Void"/>
         </property>
+        <property key="markerImageAttr" type="attribute" required="false" entityProperty="mapEntity" isPath="optional" pathType="reference">
+            <caption>Marker image key</caption>
+            <category>Data source</category>
+            <description>Used to find the image associated with specified key in the marker images.</description>
+            <attributeTypes>
+                <attributeType name="String"/>
+                <attributeType name="Enum"/>
+            </attributeTypes>
+        </property>
         <!--
             APPEARANCE
         -->
@@ -118,6 +127,28 @@
             <caption>Marker template</caption>
             <category>Appearance</category>
             <description>If you set the Marker attribute (Data Source), you can control what the popup will contain. Use '{Marker}' as the value of your marker attribute (this will be replaced). Example: "&lt;p&gt;{Marker}&lt;/p&gt;"</description>
+        </property>
+        <property key="markerDefaultImage" type="image" required="false">
+            <caption>Default marker image</caption>
+            <category>Appearance</category>
+            <description>The default image to use if no value is specified in the attribute used for the marker image key (see data source tab).</description>
+        </property>
+        <property key="markerImages" type="object" isList="true" required="false">
+            <caption>Marker images</caption>
+            <category>Appearance</category>
+            <description>Marker images related to the keys from the specified key attribute (see data source tab).</description>
+            <properties>
+                <property key="enumKey" type="string">
+                    <caption>Key</caption>
+                    <category>Appearance</category>
+                    <description>The enum key as string (empty '' enum values are not recognized, use the default icon for this).</description>
+                </property>
+                <property key="enumImage" type="image">
+                    <caption>Image</caption>
+                    <category>Appearance</category>
+                    <description>Image shown when marker image key attribute contains the key for this image.</description>
+                </property>
+            </properties>
         </property>
         <!--
             MAPTYPE
