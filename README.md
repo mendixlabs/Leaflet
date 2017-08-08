@@ -1,14 +1,14 @@
-#Leaflet Maps Widget [![Support](https://img.shields.io/badge/Mendix%20Support%3A-Community-orange.svg)](https://world.mendix.com/display/howto50/App+Store+Content+Support)
+# Leaflet Maps Widget [![Support](https://img.shields.io/badge/Mendix%20Support%3A-Community-orange.svg)](https://world.mendix.com/display/howto50/App+Store+Content+Support)
 
 ![Banner](https://raw.githubusercontent.com/mendix/Leaflet/master/assets/app_store_banner.png)
 
 Add different type of maps to your application, using [Leaflet.js](http://leafletjs.com/)! This widget is almost the same as the GoogleMaps widget, without the typical interaction you have in Google Maps, but with a wide variety of maps available.
 
-##Typical usage scenario
+## Typical usage scenario
 
 Showing an overview where all your branches/members/clients/orders/etc. are.
 
-##Features and limitations
+## Features and limitations
 
 Easy to implement. Can use both a context object as well as without.
 
@@ -64,10 +64,10 @@ Providers:
         .WorldGrayCanvas
 ```
 
-##Dependencies
+## Dependencies
 Mendix 5.18 or higher.
 
-##Configuration
+## Configuration
 
 There are 3 use-cases for which this widget can be used.
 
@@ -77,16 +77,16 @@ There are 3 use-cases for which this widget can be used.
 
 To finish up, just enter the correct values into the widget. For more information on the different input properties, read below.
 
-##Properties
+## Properties
 
-####Behaviour
+#### Behaviour
 * Pan to context: Set this only to true if your object containing the address matches your dataview. With this you can have your dataview listen to a datagrid of your Users objects containing the addresses and it will jump to the matching marker on the map.
 * Default latitude: The default latitude the map should use when no objects are found or there is no object found (when using an XPath with CurrentObject)
 * Default longitude: The default longitude the map should use when no objects are found or there is no object found (when using an XPath with CurrentObject)
 * Single item zoom level: The zoom level to be used when showing a single item or the default location. Level 1 shows the entire globe, 15 is city level and 20 is house level.
 * Refresh on entity changes: When set to true, the map refreshes on any changes to the mapped entity (and/or 1-deep entity). This includes on create/delete/change. Do note that it simply reloads the entire map, so this is not recommended when mapping a lot of objects.
 
-####Data Source
+#### Data Source
 * Objects: The widget retrieves its own objects based on the entity specified here.
 * XPath constraint: The XPath constraint to be used for retrieving the objects. Important: Even though the Modeler lets you, you can't use '[%CurrentObject%]' if your dataview entity matches the entity of the objects you are retrieving. Doing so will result in an error.
 * Marker attribute: The attribute that contains the text to display in the info window at the location. No info window will be shown if this is left empty. Tip: The window displays HTML, you can use the Rich Text Editor widget to create your styled text and have it saved as HTML. This can then be directly used for the info window! This can be 1-deep association.
@@ -95,12 +95,12 @@ To finish up, just enter the correct values into the widget. For more informatio
 * On click microflow: Microflow to be executed when clicking on a marker. The Microflow will have the corresponding object as an input parameter
 * Marker category: Category of the marker. This is used as a label together with "Show Categories" in Controls.
 
-####Appearance
+#### Appearance
 * Height: The height the widget will have (in pixels) . This attribute is required.
 * Width: The width of the widget, can be in pixels or percentage.
 * Marker template: If you set the Marker attribute in Data Source, you can control the html that is used inside the popup that is shown when clicking a marker
 
-####Map Type
+#### Map Type
 * Maptype: Map type, see features
 * Use custom map type: If you want to use your own map type, set this to 'Yes'
 * Custom Map Url: Set the URL for the custom map type*
@@ -108,7 +108,7 @@ To finish up, just enter the correct values into the widget. For more informatio
 
 > **More information about the Custom Map Url and the Custom Map Options can be found on the [Leaflet Reference](http://leafletjs.com/reference.html#tilelayer).**
 
-####Controls
+#### Controls
 * Mouse dragging: Enable/disable dragging the map using the mouse
 * Touch zoom: Enable/disable zooming by touch-dragging two fingers (mobile)
 * Mouse scrolling: Enable/disable scrolling by using the mouse wheel
@@ -117,22 +117,22 @@ To finish up, just enter the correct values into the widget. For more informatio
 * Fullscreen control: Enable/disable fullscreen button
 * Show categories: Add a layers button tot the map where you can switch categories on and off. You will need to set the Marker category in Data Source
 
-####Controls position
+#### Controls position
 This tab contains the positions on the map for various controls that you can switch on/off in "Controls"
 
-####Location
+#### Location
 * Add geolocation button: This will add a button that you can use to find your location
 * Geolocation control position: Position of the geolocation button on the map
 * Draw an uncertainty circle: Draw a circle around the location, indicating how big the uncertainty is
 * Keep zoom level: When locating, keep the current zoom level. If this is set to false, it will use the maximimum zoom level
 
-####Scale
+#### Scale
 * Add scale: Add a scale indicator on the map
 * Scale position
 * Show metric scale line (m/km)
 * Show imperial scale line (mi/ft)
 * Max width (in pixels, dynamically rounded)
 
-##Troubleshooting
+## Troubleshooting
 
 * If your map does not load on Cloud deployment, it usually means it tries to download map files from a HTTP source, instead of HTTPS. This is usually blocked. If that happens, please report this as an issue, so we can disable the map type. If you use a custom Map Type, make sure the URL starts with ``https://`` or ``//``.
