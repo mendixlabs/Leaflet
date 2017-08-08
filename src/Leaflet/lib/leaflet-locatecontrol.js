@@ -1,3 +1,4 @@
+/* jshint -W108 */
 /*!
 Copyright (c) 2016 Dominik Moritz
 
@@ -5,21 +6,7 @@ This file is part of the leaflet locate control. It is licensed under the MIT li
 You can find the project at: https://github.com/domoritz/leaflet-locatecontrol
 */
 (function (factory, window) {
-     // see https://github.com/Leaflet/Leaflet/blob/master/PLUGIN-GUIDE.md#module-loaders
-     // for details on how to structure a leaflet plugin.
-
-    // define an AMD module that relies on 'leaflet'
-    if (typeof define === 'function' && define.amd) {
-        define(['Leaflet/lib/leaflet-src'], factory);
-
-    // define a Common JS module that relies on 'leaflet'
-    } else if (typeof exports === 'object') {
-        if (typeof window !== 'undefined' && window.L) {
-            module.exports = factory(L);
-        } else {
-            module.exports = factory(require('leaflet'));
-        }
-    }
+    define(['Leaflet/lib/leaflet'], factory);
 
     // attach your plugin to the global 'L' variable
     if(typeof window !== 'undefined' && window.L){

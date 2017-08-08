@@ -1,6 +1,6 @@
 /* jshint -W108 */
 (function (root, factory) {
-	define(['Leaflet/lib/leaflet-src'], factory);
+	define(['Leaflet/lib/leaflet'], factory);
 }(this, function (L) {
     'use strict';
 

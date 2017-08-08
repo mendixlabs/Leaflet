@@ -8,7 +8,7 @@ define([
     "dojo/_base/lang",
     "dojo/text!Leaflet/widget/template/Leaflet.html",
     // Leaflet
-    "Leaflet/lib/leaflet-src",
+    "Leaflet/lib/leaflet",
 
     // Plugins
     "Leaflet/lib/leaflet-providers",
@@ -20,6 +20,7 @@ define([
 
     var LL = Leaflet.noConflict();
     LL.Icon.Default.imagePath = require.toUrl("Leaflet/widget/ui/").split("?")[0];
+    console.log(LL.Icon.Default.imagePath);
 
     return declare("Leaflet.widget.Leaflet", [_WidgetBase, _TemplatedMixin], {
 
@@ -285,7 +286,7 @@ define([
 
             if (this._map) {
                 if (this._layerController) {
-                    this._layerController.removeFrom(this._map);
+                    this._layerController.remove();
                     this._layerController = null;
                 }
                 // Because we added an id to the category (making sure this is on the same map (seems a bug), we need to copy this)

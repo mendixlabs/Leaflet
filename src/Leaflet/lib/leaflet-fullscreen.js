@@ -1,3 +1,4 @@
+/* jshint -W108 */
 // Source: https://github.com/brunob/leaflet.fullscreen/blob/master/Control.FullScreen.js
 
 /*
@@ -5,16 +6,7 @@
 */
 
 (function (root, factory) {
-	if (typeof define === 'function' && define.amd) {
-		// AMD. Register as an anonymous module.
-		define(['Leaflet/lib/leaflet-src'], factory);
-	} else if (typeof modules === 'object' && module.exports) {
-		// define a Common JS module that relies on 'leaflet'
-		module.exports = factory(require('leaflet'));
-	} else {
-		// Assume Leaflet is loaded into global object L already
-		factory(L);
-	}
+	define(['Leaflet/lib/leaflet'], factory);
 }(this, function (L) {
 	'use strict';
 
