@@ -49,6 +49,9 @@ define([
         mapHeight: "",
         mapWidth: "",
         markerTemplate: "<p>{Marker}</p>",
+        markerDefaultImage: "",
+        markerImageAttr: "",
+        markerImages: [],
 
         mapType: "OpenStreetMap_Mapnik",
         customMapType: false,
@@ -79,6 +82,7 @@ define([
         scaleControlMaxWidth: 100,
 
         // Internal variables
+        _markerImages: {},
         _markerCache: [],
         _layerGroup: null,
         _layerCategoryGroups: {},
@@ -236,6 +240,22 @@ define([
                     iconLoading: "glyphicon glyphicon-refresh"
                 }).addTo(this._map);
             }
+
+            if (this.markerDefaultImage) {
+                var defaultMarkerIcon = LL.icon({
+                    iconUrl: window.mx.appUrl + this.markerDefaultImage
+                });
+                LL.Marker.prototype.options.icon = defaultMarkerIcon;
+            };
+
+            if (this.markerImages.length > 1) {
+                    dojoArray.forEach(this.markerImages, function (imageObj) {
+                        var markerIcon = LL.icon({
+                            iconUrl: window.mx.appUrl + imageObj.enumImage
+                        });
+                        this._markerImages[imageObj.enumKey] = markerIcon;
+                    }, this);
+            };
 
             this._map.addLayer(this._getMapLayer());
             this._map.setZoom(this.lowestZoom); // trigger setzoom to make sure it is rendered
@@ -397,7 +417,12 @@ define([
                     loc: loc
                 };
 
-            var marker = LL.marker(loc);
+            var marker;
+            if (this.markerImageAttr && this._markerImages && this._markerImages[obj.get(this.markerImageAttr)]) {
+                marker = LL.marker(loc, {icon: this._markerImages[obj.get(this.markerImageAttr)]});
+            } else {
+                marker = LL.marker(loc);
+            }
 
             if (this.onClickMarkerMf !== "") {
                 marker.on("click", lang.hitch(this, function(e) {
