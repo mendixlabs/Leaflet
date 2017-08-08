@@ -246,7 +246,7 @@ define([
                     iconUrl: window.mx.appUrl + this.markerDefaultImage
                 });
                 LL.Marker.prototype.options.icon = defaultMarkerIcon;
-            };
+            }
 
             if (this.markerImages.length > 1) {
                     dojoArray.forEach(this.markerImages, function (imageObj) {
@@ -255,7 +255,7 @@ define([
                         });
                         this._markerImages[imageObj.enumKey] = markerIcon;
                     }, this);
-            };
+            }
 
             this._map.addLayer(this._getMapLayer());
             this._map.setZoom(this.lowestZoom); // trigger setzoom to make sure it is rendered
