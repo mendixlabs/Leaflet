@@ -94,11 +94,14 @@ To finish up, just enter the correct values into the widget. For more informatio
 * Longitude attribute: The attribute containing the longitudes of the objects. This can be 1-deep association.
 * On click microflow: Microflow to be executed when clicking on a marker. The Microflow will have the corresponding object as an input parameter
 * Marker category: Category of the marker. This is used as a label together with "Show Categories" in Controls.
+* Marker image key: Used to find the image associated with specified key in the marker images. (This attribute should contain a string that will correspond to a key set in Marker images, set in Appearance)
 
 #### Appearance
 * Height: The height the widget will have (in pixels) . This attribute is required.
 * Width: The width of the widget, can be in pixels or percentage.
 * Marker template: If you set the Marker attribute in Data Source, you can control the html that is used inside the popup that is shown when clicking a marker
+* Default marker image: Use this image as default image if the key (set in Data Source -> Marker image key) cannot be found.
+* Marker images: Images that can be specified with a key. If the value of the attribute set in Data Source -> 'Marker image key' corresponds to this key, it will use this image as marker.
 
 #### Map Type
 * Maptype: Map type, see features

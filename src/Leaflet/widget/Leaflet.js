@@ -122,7 +122,6 @@ define([
         },
 
         resize: function(box) {
-            logger.debug(this.id + ".resize");
             if (this._map) {
                 this._map.invalidateSize();
             }
