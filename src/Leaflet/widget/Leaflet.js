@@ -160,18 +160,32 @@ define([
             if (this.customMapType && this.customMapTypeUrl) {
                 var options = null;
 
-                try {
-                    options = JSON.parse(this.customMapTypeOptions);
-                } catch (e) {
-                    console.error(this.id + "._getMapLayer error parsing Custom Map Options: " + e.toString());
-                    options = {};
+                if (this.customMapTypeOptions !== "") {
+                    try {
+                        options = JSON.parse(this.customMapTypeOptions);
+                    } catch (e) {
+                        console.warn(this.id + "._getMapLayer error parsing Custom Map Options: " + e.toString() + ", not using these options");
+                        options = {};
+                    }
                 }
-
                 tileLayer = LL.tileLayer(this.customMapTypeUrl, options);
 
             } else {
                 var providerName = this.mapType.replace(/_/g, ".");
-                tileLayer = LL.tileLayer.provider(providerName);
+
+                if (providerName.indexOf("HERE") === 0) {
+                    if (this.hereAppId !== "" && this.hereAppCode !== "") {
+                        tileLayer = LL.tileLayer.provider(providerName, {
+                            app_id: this.hereAppId,
+                            app_code: this.hereAppCode
+                        });
+                    } else {
+                        console.error(this.id + " for HERE maps you need to provide a valid app ID and key. Get one: http://developer.here.com/");
+                        tileLayer = LL.tileLayer.provider("OpenStreetMap.Mapnik");
+                    }
+                } else {
+                    tileLayer = LL.tileLayer.provider(providerName);
+                }
             }
 
             if (tileLayer.options.minZoom < this._minZoom) {
