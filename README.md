@@ -139,3 +139,5 @@ This tab contains the positions on the map for various controls that you can swi
 ## Troubleshooting
 
 * If your map does not load on Cloud deployment, it usually means it tries to download map files from a HTTP source, instead of HTTPS. This is usually blocked. If that happens, please report this as an issue, so we can disable the map type. If you use a custom Map Type, make sure the URL starts with ``https://`` or ``//``.
+
+
