@@ -413,46 +413,5 @@
             <category>Scale</category>
             <description>Max width of the control in pixels, this is set dynamically to show round values</description>
         </property>
-        <!--
-            GEOJSON
-        -->
-        <property key="entityGeoJSON" type="entity" required="false">
-            <caption>GeoJSON Entity</caption>
-            <category>GeoJSON</category>
-            <description>Entity for a GeoJSON.</description>
-        </property>
-        <property key="attributeGeoJSON" type="attribute" entityProperty="entityGeoJSON" required="false">
-            <caption>GeoJSON Content attribute</caption>
-            <category>GeoJSON</category>
-            <description>Attribute that contains the JSON</description>
-            <attributeTypes>
-                 <attributeType name="String" />
-            </attributeTypes>
-        </property>
-        <property key="getGeoJSONMf" type="microflow" required="false">
-            <caption>GeoJSON Microflow</caption>
-            <category>GeoJSON</category>
-            <description>Load GeoJSON files in your map. The microflow should return a list.</description>
-            <returnType type="Object" isList="true" entityProperty="entityGeoJSON"></returnType>
-        </property>
-        <property key="entityGeoJSONFeature" type="entity" required="false" allowNonPersistableEntities="true">
-            <caption>GeoJSON Feature entity</caption>
-            <category>GeoJSON</category>
-            <description>Entity that is mapped to GeoJSON Feature. This should be non-persistable.</description>
-        </property>
-        <property key="attributeGeoJSONFeatureId" type="attribute" entityProperty="entityGeoJSONFeature" required="false">
-            <caption>GEOJSON Feature ID attribute</caption>
-            <category>GeoJSON</category>
-            <description>Attribute that is used for identification</description>
-            <attributeTypes>
-                 <attributeType name="String" />
-            </attributeTypes>
-        </property>
-        <property key="clickGeoJSONFeature" type="microflow" required="false" entityProperty="entityGeoJSONFeature">
-            <caption>On feature click microflow</caption>
-            <category>GeoJSON</category>
-            <description>Microflow that will be triggered by clicking on a feature. If you set the Feature Entity and Attribute, it will create a new object and pass it to the microflow.</description>
-            <returnType type="Void"></returnType>
-        </property>
     </properties>
 </widget>

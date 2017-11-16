@@ -5,7 +5,6 @@ import { execute } from '@/helpers/microflow';
 import template from './Leaflet.template.html';
 
 require('es6-promise').polyfill();
-import 'whatwg-fetch';
 
 import Leaflet from 'leaflet';
 import 'leaflet-providers';
@@ -273,69 +272,7 @@ Get one: http://developer.here.com/`);
         this._map.setZoom(this.lowestZoom); // trigger setzoom to make sure it is rendered
         this._layerGroup.addTo(this._map);
 
-        if ('' !== this.getGeoJSONMf && '' !== this.entityGeoJSON && '' !== this.attributeGeoJSON) {
-            this._addGeoJSON();
-        }
-
         this._fetchMarkers(callback);
-    },
-
-    _addGeoJSON() {
-        this.log('_addGeoJSON');
-        const guid = this._contextObj && this._contextObj.getGuid && this._contextObj.getGuid() || null;
-
-        this.execute(this.getGeoJSONMf, guid, objs => {
-            dojoArray.forEach(objs, obj => {
-                const content = obj.get(this.attributeGeoJSON);
-                if (content) {
-                    let geoJSON = null;
-                    try {
-                        geoJSON = JSON.parse(content);
-                    } catch (e) {
-                        console.error(this.id + ' Error parsing GeoJSON: ', e);
-                        geoJSON = null;
-                    }
-
-                    if (null !== geoJSON) {
-                        Leaflet.geoJSON(geoJSON, {
-                            style: feature => {
-                                return feature.properties && feature.properties.style;
-                            },
-                            onEachFeature: (feature, layer) => {
-                                layer.on({
-                                    click: () => {
-                                        this._onClickFeature(feature);
-                                    },
-                                });
-                            },
-                        }).addTo(this._map);
-                    }
-                }
-            });
-        }, err => {
-            console.error(this.id + ' Error executing GeoJSON microflow: ', err);
-        });
-    },
-
-    _onClickFeature(feature) {
-        this.log('_onClickFeature', feature);
-
-        if ('' !== this.entityGeoJSONFeature && '' !== this.attributeGeoJSONFeatureId && 'undefined' !== typeof feature.id) {
-            mx.data.create({
-                entity: this.entityGeoJSONFeature,
-                callback: createdObj => {
-                    createdObj.set(this.attributeGeoJSONFeatureId, feature.id);
-                    if ('' !== this.clickGeoJSONFeature) {
-                        this.execute(this.clickGeoJSONFeature, createdObj.getGuid());
-                    }
-                },
-                error: e => {
-                    console.error(this.id + ' Error creating GeoJSON feature: ', e);
-                },
-            });
-        } else if ('' !== this.clickGeoJSONFeature) {
-            this.execute(this.clickGeoJSONFeature);
-        }
     },
 
     _updateLayerControls() {
