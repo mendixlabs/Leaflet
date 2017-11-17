@@ -5,7 +5,6 @@ import { execute } from '@/helpers/microflow';
 import template from './Leaflet.template.html';
 
 require('es6-promise').polyfill();
-import 'whatwg-fetch';
 
 import Leaflet from 'leaflet';
 import 'leaflet-providers';
