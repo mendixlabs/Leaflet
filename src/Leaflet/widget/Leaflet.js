@@ -13,6 +13,7 @@ import 'leaflet-fullscreen';
 
 import domStyle from 'dojo/dom-style';
 import dojoArray from 'dojo/_base/array';
+import domAttr from 'dojo/dom-attr';
 
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
@@ -99,6 +100,7 @@ export default defineWidget('Leaflet', template, {
 
     postCreate() {
         this.log('postCreate', this._WIDGET_VERSION);
+        domAttr.set(this.domNode, 'data-widget-version', this._WIDGET_VERSION);
 
         this._defaultPosition = [
             parseFloat(this.defaultLat),
