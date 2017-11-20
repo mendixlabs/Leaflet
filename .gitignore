@@ -1,3 +1,8 @@
+build
+node_modules
+package-lock.json
+*.*DS_Store*
+
 test/javasource/
 test/deployment/
 test/.classpath
@@ -11,9 +16,6 @@ test/.project
 *.lock
 .idea/
 
-dist/
-
-node_modules/
 .editorconfig
 *DS_Store*
 .vscode/
