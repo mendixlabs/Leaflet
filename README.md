@@ -1,4 +1,4 @@
-# Leaflet Maps Widget [![Support](https://img.shields.io/badge/Mendix%20Support%3A-Community-orange.svg)](https://world.mendix.com/display/howto50/App+Store+Content+Support)
+# Leaflet Maps Widget [![Support](https://img.shields.io/badge/Mendix%20Support%3A-Community-orange.svg)](https://docs.mendix.com/community/app-store/app-store-content-support)
 
 ![Banner](https://raw.githubusercontent.com/mendix/Leaflet/master/assets/app_store_banner.png)
 
