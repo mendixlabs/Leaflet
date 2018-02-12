@@ -17,7 +17,7 @@
     "filesFolder": "widget",
     "libraries": false,
     "core": false,
-    "path": "./test/"
+    "path": "/Volumes/C/Projects/MX/Leaflet/test/"
   },
   "keywords": [
     "widget",
@@ -74,6 +74,7 @@
     "leaflet-fullscreen": "^1.0.2",
     "leaflet-providers": "^1.1.17",
     "leaflet.locatecontrol": "^0.62.0",
-    "whatwg-fetch": "^2.0.3"
+    "whatwg-fetch": "^2.0.3",
+    "widget-base-helpers": "^1.0.14"
   }
 }

@@ -1,6 +1,4 @@
-import { defineWidget } from '@/helpers/widget';
-import { log, runCallback } from '@/helpers';
-import { execute } from '@/helpers/microflow';
+import { defineWidget, log, runCallback, execute } from 'widget-base-helpers';
 
 import template from './Leaflet.template.html';
 
@@ -20,6 +18,12 @@ import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
 import 'leaflet.locatecontrol/dist/L.Control.Locate.css';
 import 'leaflet.locatecontrol/dist/L.Control.Locate.mapbox.css';
 
+// The following code will be stripped with our webpack loader and should only be used if you plan on doing styling
+/* develblock:start */
+import loadcss from 'loadcss';
+loadcss(`/widgets/Leaflet/widget/ui/Leaflet.css`);
+/* develblock:end */
+
 Leaflet.Icon.Default.imagePath = window.require.toUrl('Leaflet/widget/ui/').split('?')[ 0 ];
 
 export default defineWidget('Leaflet', template, {
@@ -36,45 +40,45 @@ export default defineWidget('Leaflet', template, {
     lowestZoom: 10,
     updateRefresh: false,
 
-    mapEntity: "",
-    xpathConstraint: "",
-    markerDisplayAttr: "",
-    latAttr: "",
-    lngAttr: "",
-    markerCategory: "",
-    onClickMarkerMf: "",
+    mapEntity: '',
+    xpathConstraint: '',
+    markerDisplayAttr: '',
+    latAttr: '',
+    lngAttr: '',
+    markerCategory: '',
+    onClickMarkerMf: '',
 
-    mapHeight: "",
-    mapWidth: "",
-    markerTemplate: "<p>{Marker}</p>",
-    markerDefaultImage: "",
-    markerImageAttr: "",
+    mapHeight: '',
+    mapWidth: '',
+    markerTemplate: '<p>{Marker}</p>',
+    markerDefaultImage: '',
+    markerImageAttr: '',
     markerImages: [],
 
-    mapType: "OpenStreetMap_Mapnik",
+    mapType: 'OpenStreetMap_Mapnik',
     customMapType: false,
-    customMapTypeUrl: "//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    customMapTypOptions: "{subdomains:'abc'}",
+    customMapTypeUrl: '//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    customMapTypOptions: '{subdomains:\'abc\'}',
 
     controlDragging: true,
     controlTouchZoom: true,
     controlScrollWheelZoom: true,
     controlZoomControl: true,
-    controlZoomControlPosition: "topleft",
+    controlZoomControlPosition: 'topleft',
     controlAttribution: true,
-    controlAttributionPosition: "bottomright",
+    controlAttributionPosition: 'bottomright',
     controlFullscreen: false,
-    controlFullscreenPosition: "topright",
+    controlFullscreenPosition: 'topright',
     controlCategories: false,
-    controlCategoriesPosition: "topright",
+    controlCategoriesPosition: 'topright',
 
     locateControl: false,
-    locateControlPosition: "topleft",
+    locateControlPosition: 'topleft',
     locateControlDrawCircle: true,
     locateControlKeepZoomLevel: false,
 
     scaleControl: false,
-    scaleControlPosition: "bottomleft",
+    scaleControlPosition: 'bottomleft',
     scaleControlMetric: true,
     scaleControlImperial: true,
     scaleControlMaxWidth: 100,
@@ -163,16 +167,16 @@ export default defineWidget('Leaflet', template, {
                 try {
                     options = JSON.parse(this.customMapTypeOptions);
                 } catch (e) {
-                    console.warn(this.id + "._getMapLayer error parsing Custom Map Options: " + e.toString() + ", not using these options");
+                    console.warn(this.id + '._getMapLayer error parsing Custom Map Options: ' + e.toString() + ', not using these options');
                     options = {};
                 }
             }
             tileLayer = Leaflet.tileLayer(this.customMapTypeUrl, options);
 
         } else {
-            const providerName = this.mapType.replace(/_/g, ".");
+            const providerName = this.mapType.replace(/_/g, '.');
 
-            if (0 === providerName.indexOf("HERE")) {
+            if (0 === providerName.indexOf('HERE')) {
                 if ('' !== this.hereAppId && '' !== this.hereAppCode) {
                     tileLayer = Leaflet.tileLayer.provider(providerName, {
                         app_id: this.hereAppId, // eslint-disable-line camelcase
@@ -181,7 +185,7 @@ export default defineWidget('Leaflet', template, {
                 } else {
                     console.error(`${this.id} for HERE maps you need to provide a valid app ID and key.
 Get one: http://developer.here.com/`);
-                    tileLayer = Leaflet.tileLayer.provider("OpenStreetMap.Mapnik");
+                    tileLayer = Leaflet.tileLayer.provider('OpenStreetMap.Mapnik');
                 }
             } else {
                 tileLayer = Leaflet.tileLayer.provider(providerName);
@@ -210,9 +214,9 @@ Get one: http://developer.here.com/`);
             width: this.mapWidth,
         });
 
-        this.mapContainer.id = this.id + "_container";
+        this.mapContainer.id = this.id + '_container';
 
-        this._map = Leaflet.map(this.id + "_container", {
+        this._map = Leaflet.map(this.id + '_container', {
             dragging: this.controlDragging,
             touchZoom: this.controlTouchZoom,
             scrollWheelZoom: this.controlScrollWheelZoom,
@@ -249,8 +253,8 @@ Get one: http://developer.here.com/`);
                 position: this.locateControlPosition,
                 drawCircle: this.locateControlDrawCircle,
                 keepCurrentZoomLevel: this.locateControlKeepZoomLevel,
-                icon: "glyphicon glyphicon-screenshot", // Using glyphicons that are part of Mendix
-                iconLoading: "glyphicon glyphicon-refresh",
+                icon: 'glyphicon glyphicon-screenshot', // Using glyphicons that are part of Mendix
+                iconLoading: 'glyphicon glyphicon-refresh',
             }).addTo(this._map);
         }
 
@@ -345,7 +349,7 @@ Get one: http://developer.here.com/`);
         if (!this.controlCategories) {
             return;
         }
-        logger.debug(this.id + "._updateLayerControls");
+        logger.debug(this.id + '._updateLayerControls');
 
         if (this._map) {
             if (this._layerController) {
@@ -360,7 +364,7 @@ Get one: http://developer.here.com/`);
                 .keys(this._layerCategoryGroups)
                 .forEach(key => {
                     add = true;
-                    layerCategoryGroups[ key.replace("_" + this.id, "") ] = this._layerCategoryGroups[ key ];
+                    layerCategoryGroups[ key.replace('_' + this.id, '') ] = this._layerCategoryGroups[ key ];
                 });
 
             if (add) {
@@ -402,7 +406,7 @@ Get one: http://developer.here.com/`);
             } else {
                 const la = this.checkAttrForDecimal(obj, this.latAttr);
                 const lo = this.checkAttrForDecimal(obj, this.lngAttr);
-                logger.error(this.id + ": " + "Incorrect coordinates (" + la + "," + lo + ")");
+                logger.error(this.id + ': ' + 'Incorrect coordinates (' + la + ',' + lo + ')');
             }
         });
 
@@ -413,27 +417,27 @@ Get one: http://developer.here.com/`);
             this._map.fitBounds(positions);
         }
 
-        runCallback.call(this, callback, "_refreshMap");
+        runCallback.call(this, callback, '_refreshMap');
     },
 
     _fetchFromDB(callback) {
         this.log('_fetchFromDB');
 
-        let xpath = "//" + this.mapEntity + this.xpathConstraint;
+        let xpath = '//' + this.mapEntity + this.xpathConstraint;
 
         this._removeAllMarkers();
 
         if (this._contextObj) {
-            xpath = xpath.replace("[%CurrentObject%]", this._contextObj.getGuid());
+            xpath = xpath.replace('[%CurrentObject%]', this._contextObj.getGuid());
             mx.data.get({
                 xpath: xpath,
                 callback: objs => {
                     this._refreshMap(objs, callback);
                 },
             });
-        } else if (!this._contextObj && -1 < xpath.indexOf("[%CurrentObject%]")) {
-            console.warn("No context for xpath, not fetching.");
-            runCallback.call(this, callback, "_fetchFromDB");
+        } else if (!this._contextObj && -1 < xpath.indexOf('[%CurrentObject%]')) {
+            console.warn('No context for xpath, not fetching.');
+            runCallback.call(this, callback, '_fetchFromDB');
         } else {
             mx.data.get({
                 xpath: xpath,
@@ -472,7 +476,7 @@ Get one: http://developer.here.com/`);
         if (!cached) {
             this._fetchFromDB(callback);
         } else {
-            runCallback.call(this, callback, "_fetchFromCache");
+            runCallback.call(this, callback, '_fetchFromCache');
         }
     },
 
@@ -509,16 +513,16 @@ Get one: http://developer.here.com/`);
         }
 
         if ('' !== this.onClickMarkerMf) {
-            marker.on("click", () => {
-                console.log(this, obj, obj.getGuid());
+            marker.on('click', () => {
+                // console.log(this, obj, obj.getGuid());
                 execute.call(this, this.onClickMarkerMf, obj.getGuid());
             });
         }
 
         if (this.markerDisplayAttr) {
             const markerTemplate = '' !== this.markerTemplate ?
-                this.markerTemplate.replace("{Marker}", obj.get(this.markerDisplayAttr)) :
-                "<p>" + obj.get(this.markerDisplayAttr) + "<p/>";
+                this.markerTemplate.replace('{Marker}', obj.get(this.markerDisplayAttr)) :
+                '<p>' + obj.get(this.markerDisplayAttr) + '<p/>';
 
             marker.bindPopup(markerTemplate, {
                 closeButton: false,
@@ -528,9 +532,9 @@ Get one: http://developer.here.com/`);
         if (this.markerCategory && this.controlCategories) {
             const category = obj.get(this.markerCategory);
             if (category) {
-                let layerCategory = this._layerCategoryGroups[ category + "_" + this.id ];
+                let layerCategory = this._layerCategoryGroups[ category + '_' + this.id ];
                 if (!layerCategory) {
-                    layerCategory = this._layerCategoryGroups[ category + "_" + this.id ] = new Leaflet.layerGroup();
+                    layerCategory = this._layerCategoryGroups[ category + '_' + this.id ] = new Leaflet.layerGroup();
                     this._layerGroup.addLayer(layerCategory);
                 }
                 layerCategory.addLayer(marker);
@@ -599,12 +603,12 @@ Get one: http://developer.here.com/`);
             if (this._contextObj) {
                 objs = [ this._contextObj ];
             } else {
-                logger.error(this.id + "._goToContext: no Context object while you have set" +
-                " \"Pan to context\" in the Modeler! Showing default position");
+                logger.error(this.id + '._goToContext: no Context object while you have set' +
+                ' \'Pan to context\' in the Modeler! Showing default position');
             }
             this._refreshMap(objs, callback);
         } else {
-            runCallback.call(this, callback, "_goToContext");
+            runCallback.call(this, callback, '_goToContext');
         }
     },
 
