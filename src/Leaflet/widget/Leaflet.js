@@ -8,6 +8,7 @@ import Leaflet from 'leaflet';
 import 'leaflet-providers';
 import 'leaflet.locatecontrol';
 import 'leaflet-fullscreen';
+import 'leaflet-bing-layer';
 
 import domStyle from 'dojo/dom-style';
 import dojoArray from 'dojo/_base/array';
@@ -17,6 +18,12 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
 import 'leaflet.locatecontrol/dist/L.Control.Locate.css';
 import 'leaflet.locatecontrol/dist/L.Control.Locate.mapbox.css';
+
+const bingMapsCultureList = ('af,am,ar-sa,as,az-Latn,be,bg,bn-BD,bn-IN,bs,ca,ca-ES-valencia,cs,cy,da,de,de-de,el,en-GB,en-US,es,es-ES,' +
+'es-US,es-MX,et,eu,fa,fi,fil-Latn,fr,fr-FR,fr-CA,ga,gd-Latn,gl,gu,ha-Latn,he,hi,hr,hu,hy,id,ig-Latn,is,it,it-it,ja,ka,kk,km,kn,ko,kok,' +
+'ku-Arab,ky-Cyrl,lb,lt,lv,mi-Latn,mk,ml,mn-Cyrl,mr,ms,mt,nb,ne,nl,nl-BE,nn,nso,or,pa,pa-Arab,pl,prs-Arab,pt-BR,pt-PT,qut-Latn,quz,ro,' +
+'ru,rw,sd-Arab,si,sk,sl,sq,sr-Cyrl-BA,sr-Cyrl-RS,sr-Latn-RS,sv,sw,ta,te,tg-Cyrl,th,ti,tk-Latn,tn,tr,tt-Cyrl,ug-Arab,uk,ur,uz-Latn,' +
+'vi,wo,xh,yo-Latn,zh-Hans,zh-Hant,zu').split(',');
 
 // The following code will be stripped with our webpack loader and should only be used if you plan on doing styling
 /* develblock:start */
@@ -82,6 +89,9 @@ export default defineWidget('Leaflet', template, {
     scaleControlMetric: true,
     scaleControlImperial: true,
     scaleControlMaxWidth: 100,
+
+    bingMapsKey: '',
+    bingMapsCulture: 'en-US',
 
     // Internal variables
     _markerImages: {},
@@ -185,6 +195,24 @@ export default defineWidget('Leaflet', template, {
                 } else {
                     console.error(`${this.id} for HERE maps you need to provide a valid app ID and key.
 Get one: http://developer.here.com/`);
+                    tileLayer = Leaflet.tileLayer.provider('OpenStreetMap.Mapnik');
+                }
+            } else if (0 === providerName.indexOf('Bing')) {
+                if ('' !== this.bingMapsKey) {
+                    const imagerySet = providerName.split('.')[ 1 ];
+                    let culture = this.bingMapsCulture;
+                    if (-1 === bingMapsCultureList.indexOf(this.bingMapsCulture)) {
+                        culture = 'en-US';
+                        console.warn(`${this.id} the Culture for Bing Maps is not valid. Resetting to 'en-US'`);
+                    }
+                    tileLayer = Leaflet.tileLayer.bing({
+                        bingMapsKey: this.bingMapsKey,
+                        imagerySet,
+                        culture,
+                    });
+                } else {
+                    console.error(`${this.id} for Bing maps you need to provide a valid maps key.
+Get one: https://msdn.microsoft.com/en-us/library/ff428642.aspx`);
                     tileLayer = Leaflet.tileLayer.provider('OpenStreetMap.Mapnik');
                 }
             } else {

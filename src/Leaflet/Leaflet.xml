@@ -163,7 +163,9 @@
                 <enumerationValue key="OpenStreetMap_DE">OpenStreetMap.DE</enumerationValue>
                 <enumerationValue key="OpenStreetMap_France">OpenStreetMap.France</enumerationValue>
                 <enumerationValue key="OpenStreetMap_HOT">OpenStreetMap.HOT</enumerationValue>
+
                 <enumerationValue key="OpenTopoMap">OpenTopoMap</enumerationValue>
+
                 <enumerationValue key="Thunderforest_OpenCycleMap">Thunderforest.OpenCycleMap</enumerationValue>
                 <enumerationValue key="Thunderforest_Transport">Thunderforest.Transport</enumerationValue>
                 <enumerationValue key="Thunderforest_TransportDark">Thunderforest.TransportDark</enumerationValue>
@@ -171,9 +173,11 @@
                 <enumerationValue key="Thunderforest_Landscape">Thunderforest.Landscape</enumerationValue>
                 <enumerationValue key="Thunderforest_Outdoors">Thunderforest.Outdoors</enumerationValue>
                 <enumerationValue key="Thunderforest_Pioneer">Thunderforest.Pioneer</enumerationValue>
+
                 <enumerationValue key="Hydda_Full">Hydda.Full</enumerationValue>
                 <enumerationValue key="Hydda_Base">Hydda.Base</enumerationValue>
                 <enumerationValue key="Hydda_RoadsAndLabels">Hydda.RoadsAndLabels</enumerationValue>
+
                 <!-- <enumerationValue key="MapBox">MapBox</enumerationValue> -->
                 <enumerationValue key="Stamen_Toner">Stamen.Toner</enumerationValue>
                 <enumerationValue key="Stamen_TonerBackground">Stamen.TonerBackground</enumerationValue>
@@ -186,6 +190,7 @@
                 <enumerationValue key="Stamen_TerrainBackground">Stamen.TerrainBackground</enumerationValue>
                 <enumerationValue key="Stamen_TopOSMRelief">Stamen.TopOSMRelief</enumerationValue>
                 <enumerationValue key="Stamen_TopOSMFeatures">Stamen.TopOSMFeatures</enumerationValue>
+
                 <enumerationValue key="Esri_WorldStreetMap">Esri.WorldStreetMap</enumerationValue>
                 <enumerationValue key="Esri_DeLorme">Esri.DeLorme</enumerationValue>
                 <enumerationValue key="Esri_WorldTopoMap">Esri.WorldTopoMap</enumerationValue>
@@ -196,6 +201,7 @@
                 <enumerationValue key="Esri_OceanBasemap">Esri.OceanBasemap</enumerationValue>
                 <enumerationValue key="Esri_NatGeoWorldMap">Esri.NatGeoWorldMap</enumerationValue>
                 <enumerationValue key="Esri_WorldGrayCanvas">Esri.WorldGrayCanvas</enumerationValue>
+
                 <enumerationValue key="HERE_normalDay">HERE.normalDay (needs Map key)</enumerationValue>
                 <enumerationValue key="HERE_normalDayCustom">HERE.normalDayCustom (needs Map key)</enumerationValue>
                 <enumerationValue key="HERE_normalDayGrey">HERE.normalDayGrey (needs Map key)</enumerationValue>
@@ -218,15 +224,18 @@
                 <enumerationValue key="HERE_satelliteDay">HERE.satelliteDay (needs Map key)</enumerationValue>
                 <enumerationValue key="HERE_terrainDay">HERE.terrainDay (needs Map key)</enumerationValue>
                 <enumerationValue key="HERE_terrainDayMobile">HERE.terrainDayMobile (needs Map key)</enumerationValue>
+
                 <enumerationValue key="BasemapAT_basemap">BasemapAT.basemap</enumerationValue>
                 <enumerationValue key="BasemapAT_grau">BasemapAT.grau</enumerationValue>
                 <enumerationValue key="BasemapAT_overlay">BasemapAT.overlay</enumerationValue>
                 <enumerationValue key="BasemapAT_highdpi">BasemapAT.highdpi</enumerationValue>
                 <enumerationValue key="BasemapAT_orthofoto">BasemapAT.orthofoto</enumerationValue>
+
                 <enumerationValue key="nlmaps_standaard">nlmaps.standaard</enumerationValue>
                 <enumerationValue key="nlmaps_pastel">nlmaps.pastel</enumerationValue>
                 <enumerationValue key="nlmaps_grijs">nlmaps.grijs</enumerationValue>
                 <enumerationValue key="nlmaps_luchtfoto">nlmaps.luchtfoto</enumerationValue>
+
                 <enumerationValue key="NASAGIBS_ModisTerraTrueColorCR">NASAGIBS.ModisTerraTrueColorCR</enumerationValue>
                 <enumerationValue key="NASAGIBS_ModisTerraBands367CR">NASAGIBS.ModisTerraBands367CR</enumerationValue>
                 <enumerationValue key="NASAGIBS_ViirsEarthAtNight2012">NASAGIBS.ViirsEarthAtNight2012</enumerationValue>
@@ -234,7 +243,12 @@
                 <enumerationValue key="NASAGIBS_ModisTerraSnowCover">NASAGIBS.ModisTerraSnowCover</enumerationValue>
                 <enumerationValue key="NASAGIBS_ModisTerraAOD">NASAGIBS.ModisTerraAOD</enumerationValue>
                 <enumerationValue key="NASAGIBS_ModisTerraChlorophyll">NASAGIBS.ModisTerraChlorophyll</enumerationValue>
+
                 <enumerationValue key="NLS">NLS</enumerationValue>
+
+                <enumerationValue key="Bing_Aerial">Bing - Aerial (needs Map key)</enumerationValue>
+                <enumerationValue key="Bing_AerialWithLabels">Bing - Aerial imagery with a road overlay (needs Map key)</enumerationValue>
+                <enumerationValue key="Bing_Road">Bing - Roads without additional imagery (needs Map key)</enumerationValue>
             </enumerationValues>
         </property>
         <property key="customMapType" type="boolean" defaultValue="false">
@@ -264,6 +278,16 @@
             <caption>HERE App Code</caption>
             <category>Map keys</category>
             <description>If you want to use HERE maps, you need an App Code. Get one here: http://developer.here.com/</description>
+        </property>
+        <property key="bingMapsKey" type="string" required="false" defaultValue="">
+            <caption>Bing Maps Key</caption>
+            <category>Map keys</category>
+            <description>If you want to use Bing maps, you need an Bing Maps Key. See documentation (Keys)</description>
+        </property>
+        <property key="bingMapsCulture" type="string" required="true" defaultValue="en-US">
+            <caption>Bing Maps Culture</caption>
+            <category>Map keys</category>
+            <description>If you want to use Bing maps, you can set a language for the labels and imagery. Please provide a valid one, you can find the values here: https://msdn.microsoft.com/en-us/library/hh441729.aspx</description>
         </property>
         <!--
             CONTROLS
@@ -441,7 +465,7 @@
             <description>Entity that is mapped to GeoJSON Feature. This should be non-persistable.</description>
         </property>
         <property key="attributeGeoJSONFeatureId" type="attribute" entityProperty="entityGeoJSONFeature" required="false">
-            <caption>GEOJSON Feature ID attribute</caption>
+            <caption>GeoJSON Feature ID attribute</caption>
             <category>GeoJSON</category>
             <description>Attribute that is used for identification</description>
             <attributeTypes>

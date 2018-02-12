@@ -40,9 +40,10 @@ Providers:
         .Landscape
         .Outdoors
         .Pioneer
-    MapQuestOpen
-        .OSM
-        .Aerial
+    Hydda
+        .Full
+        .Base
+        .RoadsAndLabels
     Stamen
         .Toner
         .TonerBackground
@@ -51,6 +52,10 @@ Providers:
         .TonerLabels
         .TonerLite
         .Watercolor
+        .Terrain
+        .TerrainBackground
+        .TopOSMRelief
+        .TopOSMFeatures
     Esri
         .WorldStreetMap
         .DeLorme
@@ -62,6 +67,53 @@ Providers:
         .OceanBasemap
         .NatGeoWorldMap
         .WorldGrayCanvas
+    HERE
+        .normalDay
+        .normalDayCustom
+        .normalDayGrey
+        .normalDayMobile
+        .normalDayGreyMobile
+        .normalDayTransit
+        .normalDayTransitMobile
+        .normalNight
+        .normalNightMobile
+        .normalNightGrey
+        .normalNightGreyMobile
+        .basicMap
+        .mapLabels
+        .trafficFlow
+        .carnavDayGrey
+        .hybridDay
+        .hybridDayMobile
+        .pedestrianDay
+        .pedestrianNight
+        .satelliteDay
+        .terrainDay
+        .terrainDayMobile
+    BasemapAT
+        .basemap
+        .grau
+        .overlay
+        .highdpi
+        .orthofoto
+    nlmaps
+        .standaard
+        .pastel
+        .grijs
+        .luchtfoto
+    NASAGIBS
+        .ModisTerraTrueColorCR
+        .ModisTerraBands367CR
+        .ViirsEarthAtNight2012
+        .ModisTerraLSTDay
+        .ModisTerraSnowCover
+        .ModisTerraAOD
+        .ModisTerraChlorophyll
+    NLS
+    Bing
+        Aerial
+        Aerial imagery with a road overlay
+        Roads without additional imagery
 ```
 
 ## Dependencies
@@ -136,8 +188,13 @@ This tab contains the positions on the map for various controls that you can swi
 * Show imperial scale line (mi/ft)
 * Max width (in pixels, dynamically rounded)
 
+## Keys
+
+For HERE and Bing you will need keys. These can be created here:
+
+* HERE: http://developer.here.com/
+* Bing: https://msdn.microsoft.com/en-us/library/ff428642.aspx
+
 ## Troubleshooting
 
 * If your map does not load on Cloud deployment, it usually means it tries to download map files from a HTTP source, instead of HTTPS. This is usually blocked. If that happens, please report this as an issue, so we can disable the map type. If you use a custom Map Type, make sure the URL starts with ``https://`` or ``//``.
-
-
