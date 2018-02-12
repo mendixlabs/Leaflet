@@ -17,7 +17,7 @@
     "filesFolder": "widget",
     "libraries": false,
     "core": false,
-    "path": "/Volumes/C/Projects/MX/Leaflet/test/"
+    "path": false
   },
   "keywords": [
     "widget",
