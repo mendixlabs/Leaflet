@@ -13,7 +13,6 @@ test/.classpath
 test/.project
 *.launch
 *.tmp
-*.lock
 .idea/
 
 .editorconfig
