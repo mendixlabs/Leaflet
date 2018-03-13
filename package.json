@@ -1,7 +1,7 @@
 {
   "name": "Leaflet",
   "private": true,
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Add different type of maps to your application, using Leaflet.js!",
   "scripts": {
     "webpack": "./node_modules/.bin/webpack",
