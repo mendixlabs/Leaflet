@@ -284,6 +284,16 @@
             <category>Map keys</category>
             <description>If you want to use Bing maps, you need an Bing Maps Key. See documentation (Keys)</description>
         </property>
+        <property key="googleMapsKey" type="string" required="false" defaultValue="">
+            <caption>Google Maps Key</caption>
+            <category>Map keys</category>
+            <description>For the Search (GeoCoder) function, we can use a Google maps key to do searches.</description>
+        </property>
+        <property key="mapBoxAccessToken" type="string" required="false" defaultValue="">
+            <caption>Mapbox Access Token</caption>
+            <category>Map keys</category>
+            <description>For the Search (GeoCoder) function, we can use an Access Token for Mapbox.</description>
+        </property>
         <property key="bingMapsCulture" type="string" required="true" defaultValue="en-US">
             <caption>Bing Maps Culture</caption>
             <category>Map keys</category>
@@ -402,6 +412,42 @@
             <caption>Keep zoom level</caption>
             <category>Location</category>
             <description>When locating, keep the current zoom level. If set to false, it will use the max zoom</description>
+        </property>
+        <!--
+            SEARCH
+        -->
+        <property key="geocoderControl" type="boolean" defaultValue="false">
+            <caption>Add geocoder (search)</caption>
+            <category>Search</category>
+            <description>This will add a search button to your map to find a location</description>
+        </property>
+        <property key="geocoderControlPosition" type="enumeration" defaultValue="topright" required="true">
+            <caption>Geocoder control position</caption>
+            <category>Search</category>
+            <description></description>
+            <enumerationValues>
+                <enumerationValue key="topleft">Top left</enumerationValue>
+                <enumerationValue key="topright">Top right</enumerationValue>
+                <enumerationValue key="bottomleft">Bottom left</enumerationValue>
+                <enumerationValue key="bottomright">Bottom right</enumerationValue>
+            </enumerationValues>
+        </property>
+        <property key="geocoderProvider" type="enumeration" defaultValue="nominatim">
+            <caption>Provider</caption>
+            <category>Search</category>
+            <description></description>
+            <enumerationValues>
+                 <!-- <enumerationValue key="arcgis">ArcGIS</enumerationValue> -->
+                 <enumerationValue key="bing">Bing (need key, see 'Map Keys')</enumerationValue>
+                 <enumerationValue key="google">Google</enumerationValue>
+                 <enumerationValue key="here">HERE (need key, see 'Map Keys')</enumerationValue>
+                 <enumerationValue key="mapbox">Mapbox</enumerationValue>
+                 <!-- <enumerationValue key="mapquest">Mapquest</enumerationValue> -->
+                 <!-- <enumerationValue key="mapzen">Mapzen</enumerationValue> -->
+                 <enumerationValue key="nominatim">Nominatim</enumerationValue>
+                 <!-- <enumerationValue key="photon">Photon</enumerationValue>
+                 <enumerationValue key="what3words">What3words</enumerationValue> -->
+            </enumerationValues>
         </property>
         <!--
             SCALE

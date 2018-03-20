@@ -4796,6 +4796,10 @@ leaflet-bing-layer@^3.2.0:
     fetch-jsonp "^1.0.0"
     leaflet "^1.0.0-beta.2"
 
+"leaflet-control-geocoder@https://github.com/perliedman/leaflet-control-geocoder.git":
+  version "1.5.7"
+  resolved "https://github.com/perliedman/leaflet-control-geocoder.git#0f9603fcd083cfc3de650ab67390d148ee9ff44b"
+
 leaflet-fullscreen@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/leaflet-fullscreen/-/leaflet-fullscreen-1.0.2.tgz#09c61c4bac45f63b2ee126afd87e5cd97650fc1b"
@@ -8168,9 +8172,9 @@ wide-align@^1.1.0:
   dependencies:
     string-width "^1.0.2"
 
-widget-base-helpers@^1.0.14:
-  version "1.0.15"
-  resolved "https://registry.yarnpkg.com/widget-base-helpers/-/widget-base-helpers-1.0.15.tgz#e99aad0b779eac8686777c2457ffbbeaddcec308"
+widget-base-helpers@^1.0.16:
+  version "1.0.16"
+  resolved "https://registry.yarnpkg.com/widget-base-helpers/-/widget-base-helpers-1.0.16.tgz#b0000b1d146720bdfe4ccf9100b74b973a022ce9"
 
 window-size@0.1.0:
   version "0.1.0"

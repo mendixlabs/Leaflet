@@ -9,6 +9,7 @@ import 'leaflet-providers';
 import 'leaflet.locatecontrol';
 import 'leaflet-fullscreen';
 import 'leaflet-bing-layer';
+import 'leaflet-control-geocoder';
 
 import domStyle from 'dojo/dom-style';
 import dojoArray from 'dojo/_base/array';
@@ -18,6 +19,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-fullscreen/dist/leaflet.fullscreen.css';
 import 'leaflet.locatecontrol/dist/L.Control.Locate.css';
 import 'leaflet.locatecontrol/dist/L.Control.Locate.mapbox.css';
+import 'leaflet-control-geocoder/dist/Control.Geocoder.css';
 
 const bingMapsCultureList = ('af,am,ar-sa,as,az-Latn,be,bg,bn-BD,bn-IN,bs,ca,ca-ES-valencia,cs,cy,da,de,de-de,el,en-GB,en-US,es,es-ES,' +
 'es-US,es-MX,et,eu,fa,fi,fil-Latn,fr,fr-FR,fr-CA,ga,gd-Latn,gl,gu,ha-Latn,he,hi,hr,hu,hy,id,ig-Latn,is,it,it-it,ja,ka,kk,km,kn,ko,kok,' +
@@ -78,6 +80,9 @@ export default defineWidget('Leaflet', template, {
     controlFullscreenPosition: 'topright',
     controlCategories: false,
     controlCategoriesPosition: 'topright',
+    geocoderControl: false,
+    geocoderControlPosition: 'topright',
+    geocoderProvider: 'nominatim',
 
     locateControl: false,
     locateControlPosition: 'topleft',
@@ -92,6 +97,8 @@ export default defineWidget('Leaflet', template, {
 
     bingMapsKey: '',
     bingMapsCulture: 'en-US',
+    googleMapsKey: '',
+    mapBoxAccessToken: '',
 
     // Internal variables
     _markerImages: {},
@@ -286,6 +293,10 @@ Get one: https://msdn.microsoft.com/en-us/library/ff428642.aspx`);
             }).addTo(this._map);
         }
 
+        if (this.geocoderControl) {
+            this._addGeoCoder();
+        }
+
         if (this.markerDefaultImage) {
             const defaultMarkerIcon = Leaflet.icon({
                 iconUrl: window.mx.appUrl + this.markerDefaultImage,
@@ -311,6 +322,55 @@ Get one: https://msdn.microsoft.com/en-us/library/ff428642.aspx`);
         }
 
         this._fetchMarkers(callback);
+    },
+
+    _addGeoCoder() {
+        this.log('_addGeoCoder');
+
+        const onMarkGeoCode = e => {
+            setTimeout(() => {
+                const marker = e.sourceTarget._geocodeMarker;
+                if (marker) {
+                    this._map.once('click', () => {
+                        marker.remove();
+                    });
+                }
+            }, 10);
+        };
+
+        let provider = this.geocoderProvider;
+        if ('bing' === provider && '' === this.bingMapsKey) {
+            console.warn(this.id + ' :: For GeoCoder using Bing, we need a Maps key. See widget');
+            provider = 'nominatim';
+        } else if ('here' === provider && !('' !== this.hereAppId && '' !== this.hereAppCode)) {
+            console.warn(this.id + ' :: For GeoCoder using HERE, we need a App Id and App Code.');
+            provider = 'nominatim';
+        }
+
+        let geoCoderProvider = null;
+
+        if ('bing' === provider) {
+            geoCoderProvider = new Leaflet.Control.Geocoder.Bing(this.bingMapsKey);
+        } else if ('google' === provider) {
+            geoCoderProvider = new Leaflet.Control.Geocoder.Google(this.googleMapsKey);
+        } else if ('mapbox' === provider) {
+            geoCoderProvider = new Leaflet.Control.Geocoder.Mapbox(this.mapBoxAccessToken);
+        } else if ('here' === provider) {
+            geoCoderProvider = new Leaflet.Control.Geocoder.HERE({
+                app_id: this.hereAppId, // eslint-disable-line camelcase
+                app_code: this.hereAppCode, // eslint-disable-line camelcase
+            });
+        } else {
+            geoCoderProvider = new Leaflet.Control.Geocoder.Nominatim();
+        }
+
+        Leaflet.Control
+            .geocoder({
+                position: this.geocoderControlPosition,
+                geocoder: geoCoderProvider,
+            })
+            .on('markgeocode', onMarkGeoCode)
+            .addTo(this._map);
     },
 
     _addGeoJSON() {
